@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign In – NovaMark</title>
+  <meta name="description" content="Sign in to your NovaMark account and access your marketing dashboard." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/global.css" />
+  <link rel="stylesheet" href="../css/auth.css" />
+</head>
+<body>
+  <!-- Background -->
+  <div class="auth-bg">
+    <div class="orb-1"></div>
+    <div class="orb-2"></div>
+    <div class="auth-grid-lines"></div>
+  </div>
+
+  <!-- Auth Page -->
+  <main class="auth-page">
+    <div class="auth-card">
+      <!-- Header -->
+      <div class="auth-header">
+        <a href="../index.html" class="auth-logo">
+          <span class="logo-icon">⚡</span>
+          <span>NovaMark</span>
+        </a>
+        <h1>Welcome back</h1>
+        <p>Don't have an account? <a href="register.html">Create one free</a></p>
+      </div>
+
+      <!-- Form Message -->
+      <div class="form-message" id="formMessage" role="alert"></div>
+
+      <!-- Login Form -->
+      <form class="auth-form" id="loginForm" novalidate>
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <div class="input-wrapper">
+            <span class="input-icon">✉️</span>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="you@example.com"
+              autocomplete="email"
+              required
+            />
+          </div>
+          <span class="field-error" id="emailError"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <div class="input-wrapper">
+            <span class="input-icon">🔒</span>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Enter your password"
+              autocomplete="current-password"
+              required
+            />
+            <button type="button" class="password-toggle" aria-label="Toggle password visibility">👁️</button>
+          </div>
+          <span class="field-error" id="passwordError"></span>
+        </div>
+
+        <div class="form-options">
+          <label class="checkbox-label">
+            <input type="checkbox" id="remember" />
+            Remember me
+          </label>
+          <a href="#" class="forgot-link">Forgot password?</a>
+        </div>
+
+        <button type="submit" id="loginBtn" class="btn btn-primary btn-auth">
+          Sign In
+        </button>
+      </form>
+
+      <!-- Divider -->
+      <div class="auth-divider">or continue with</div>
+
+      <!-- Social Auth -->
+      <div class="social-auth">
+        <button type="button" class="btn-social" id="demoLoginBtn">
+          <span class="social-icon">🚀</span>
+          Try Demo Account
+        </button>
+        <button type="button" class="btn-social">
+          <span class="social-icon">G</span>
+          Continue with Google
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <script src="../js/auth.js"></script>
+</body>
+</html>

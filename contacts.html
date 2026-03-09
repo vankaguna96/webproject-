@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contacts – NovaMark</title>
+  <meta name="description" content="Manage your marketing contacts, view details, and organize your audience." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/global.css" />
+  <link rel="stylesheet" href="../css/dashboard.css" />
+  <style>
+    .contacts-toolbar { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:24px; }
+    .contacts-toolbar .search-input-wrap input { width:280px; }
+    .contacts-table-wrap { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; }
+    .contacts-table { width:100%; border-collapse:collapse; }
+    .contacts-table th {
+      padding:12px 16px; text-align:left;
+      font-size:0.72rem; font-weight:700; text-transform:uppercase;
+      letter-spacing:0.8px; color:var(--text-muted);
+      background:var(--bg-surface); border-bottom:1px solid var(--border);
+      cursor:pointer; user-select:none; white-space:nowrap;
+    }
+    .contacts-table th:hover { color:var(--text-primary); }
+    .contacts-table td { padding:13px 16px; font-size:0.88rem; color:var(--text-secondary); border-bottom:1px solid rgba(255,255,255,0.04); }
+    .contacts-table tr:hover td { background:var(--bg-glass); }
+    .contacts-table tr:last-child td { border-bottom:none; }
+    .contact-name-cell { display:flex; align-items:center; gap:10px; }
+    .contact-avatar { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.75rem; color:#fff; flex-shrink:0; }
+    .contact-name { font-weight:600; font-size:0.88rem; color:var(--text-primary); }
+    .contact-since { font-size:0.72rem; color:var(--text-muted); }
+    .tag { display:inline-block; padding:2px 8px; border-radius:var(--radius-full); font-size:0.7rem; font-weight:600; background:rgba(99,102,241,0.12); color:var(--primary-light); border:1px solid rgba(99,102,241,0.2); margin-right:4px; }
+    .tag.green { background:rgba(16,185,129,0.1); color:var(--success); border-color:rgba(16,185,129,0.2); }
+    .tag.orange { background:rgba(245,158,11,0.1); color:var(--warning); border-color:rgba(245,158,11,0.2); }
+    .row-actions { display:flex; gap:6px; opacity:0; transition:opacity var(--transition); }
+    .contacts-table tr:hover .row-actions { opacity:1; }
+    .row-btn { padding:4px 10px; border-radius:var(--radius-sm); font-size:0.72rem; font-weight:600; cursor:pointer; border:1px solid var(--border); background:var(--bg-glass); color:var(--text-secondary); transition:all var(--transition); }
+    .row-btn:hover { background:var(--bg-glass-hover); color:var(--text-primary); }
+    .contacts-footer { display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-top:1px solid var(--border); font-size:0.82rem; color:var(--text-muted); }
+    .pagination { display:flex; gap:4px; }
+    .page-btn { width:30px; height:30px; display:flex; align-items:center; justify-content:center; border-radius:var(--radius-sm); border:1px solid var(--border); cursor:pointer; font-size:0.8rem; transition:all var(--transition); }
+    .page-btn:hover { background:var(--bg-glass); color:var(--text-primary); }
+    .page-btn.active { background:var(--gradient-primary); color:#fff; border-color:transparent; }
+    .import-btn { display:flex; align-items:center; gap:6px; }
+
+    /* Clickable stat card active state */
+    .contact-stat-card { transition: all var(--transition); }
+    .contact-stat-card.card-active {
+      border-color: var(--primary) !important;
+      box-shadow: 0 0 0 2px rgba(99,102,241,0.25), var(--shadow-md);
+    }
+
+    /* ── Import CSV Modal ───────────────────────────────── */
+    .modal-overlay {
+      position:fixed; inset:0;
+      background:rgba(0,0,0,0.65); backdrop-filter:blur(8px);
+      z-index:700; display:none;
+      align-items:center; justify-content:center;
+    }
+    .modal-overlay.open { display:flex; }
+    .modal-box {
+      background:var(--bg-card); border:1px solid var(--border);
+      border-radius:var(--radius-xl); width:100%; max-width:580px;
+      max-height:90vh; display:flex; flex-direction:column;
+      animation:fadeInUp 0.25s ease; overflow:hidden;
+    }
+    .modal-header {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:18px 22px; border-bottom:1px solid var(--border);
+      background:var(--bg-surface);
+    }
+    .modal-title { font-weight:800; font-size:1rem; font-family:var(--font-heading); }
+    .modal-close {
+      width:30px; height:30px; border-radius:var(--radius-md);
+      border:1px solid var(--border); background:var(--bg-glass);
+      color:var(--text-secondary); cursor:pointer; font-size:1rem;
+      display:flex; align-items:center; justify-content:center;
+      transition:all var(--transition);
+    }
+    .modal-close:hover { background:var(--bg-glass-hover); color:var(--text-primary); }
+    .modal-body { padding:22px; overflow-y:auto; display:flex; flex-direction:column; gap:18px; }
+    .modal-footer {
+      display:flex; justify-content:flex-end; gap:10px;
+      padding:16px 22px; border-top:1px solid var(--border);
+      background:var(--bg-surface);
+    }
+
+    /* Drop zone */
+    .csv-dropzone {
+      border:2px dashed var(--border); border-radius:var(--radius-lg);
+      padding:36px 24px; text-align:center; cursor:pointer;
+      transition:all 0.2s; background:var(--bg-surface);
+    }
+    .csv-dropzone.dragover { border-color:var(--primary); background:rgba(99,102,241,0.06); }
+    .csv-dropzone-icon { font-size:2.4rem; margin-bottom:10px; }
+    .csv-dropzone-title { font-weight:700; font-size:0.95rem; margin-bottom:4px; }
+    .csv-dropzone-sub { font-size:0.78rem; color:var(--text-muted); }
+    .csv-dropzone-sub a { color:var(--primary-light); text-decoration:none; cursor:pointer; }
+    .csv-dropzone-sub a:hover { text-decoration:underline; }
+
+    /* Preview table */
+    .csv-preview-title { font-size:0.82rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.6px; }
+    .csv-preview-wrap { border:1px solid var(--border); border-radius:var(--radius-md); overflow:auto; max-height:200px; }
+    .csv-preview-table { width:max-content; min-width:100%; border-collapse:collapse; font-size:0.8rem; }
+    .csv-preview-table th { padding:8px 12px; background:var(--bg-surface); color:var(--text-muted); font-weight:700; font-size:0.7rem; text-transform:uppercase; border-bottom:1px solid var(--border); white-space:nowrap; }
+    .csv-preview-table td { padding:7px 12px; border-bottom:1px solid rgba(255,255,255,0.04); color:var(--text-secondary); white-space:nowrap; }
+    .csv-preview-table tr:last-child td { border-bottom:none; }
+
+    .csv-info-row { display:flex; gap:12px; }
+    .csv-info-card { flex:1; background:var(--bg-surface); border:1px solid var(--border); border-radius:var(--radius-md); padding:12px 14px; }
+    .csv-info-card strong { display:block; font-size:1.2rem; font-weight:800; font-family:var(--font-heading); }
+    .csv-info-card span { font-size:0.72rem; color:var(--text-muted); }
+    .csv-hint { font-size:0.76rem; color:var(--text-muted); background:rgba(99,102,241,0.08); border:1px solid rgba(99,102,241,0.15); border-radius:var(--radius-md); padding:10px 14px; }
+
+    /* Add Contact modal form */
+    .add-field { display:flex; flex-direction:column; gap:5px; }
+    .add-field label { font-size:0.78rem; font-weight:700; color:var(--text-muted); }
+    .add-field input, .add-field select {
+      padding:9px 12px; border-radius:var(--radius-md);
+      border:1px solid var(--border); background:var(--bg-surface);
+      color:var(--text-primary); font-size:0.88rem; outline:none;
+      transition:border-color 0.15s;
+    }
+    .add-field input:focus, .add-field select:focus { border-color:var(--primary); }
+    .add-fields-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  </style>
+</head>
+<body>
+<div class="dashboard-layout">
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a href="../index.html" class="sidebar-logo"><span class="logo-icon">⚡</span><span>NovaMark</span></a>
+    </div>
+    <nav class="sidebar-nav">
+      <span class="nav-section-label">Main</span>
+      <a href="dashboard.html" class="sidebar-link"><span class="link-icon">📊</span><span>Dashboard</span></a>
+      <a href="campaigns.html" class="sidebar-link"><span class="link-icon">📣</span><span>Campaigns</span></a>
+      <a href="analytics.html" class="sidebar-link"><span class="link-icon">📈</span><span>Analytics</span></a>
+      <a href="email.html" class="sidebar-link"><span class="link-icon">📧</span><span>Email Center</span></a>
+      <span class="nav-section-label">Audience</span>
+      <a href="contacts.html" class="sidebar-link active"><span class="link-icon">👥</span><span>Contacts</span></a>
+      <a href="segments.html" class="sidebar-link"><span class="link-icon">🎯</span><span>Segments</span></a>
+      <span class="nav-section-label">Settings</span>
+      <a href="settings.html" class="sidebar-link"><span class="link-icon">⚙️</span><span>Settings</span></a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-profile">
+        <div class="user-avatar" id="sidebarUserAvatar">U</div>
+        <div class="user-info"><strong id="sidebarUserName">Loading...</strong><span id="sidebarUserEmail">...</span></div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main-content">
+    <header class="topbar">
+      <button class="icon-btn" id="sidebarToggle">☰</button>
+      <div class="topbar-search"><span class="search-icon">🔍</span><input type="search" placeholder="Search contacts..." /></div>
+      <div class="topbar-actions">
+        <span style="color:var(--text-muted);font-size:0.8rem;" id="currentTime"></span>
+        <a href="#" class="icon-btn">🔔<span class="notif-dot"></span></a>
+        <button class="icon-btn" id="logoutBtn">🚪</button>
+      </div>
+    </header>
+
+    <main class="dashboard-body">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">👥 Contacts</h1>
+          <p class="page-subtitle">48,293 total contacts across all segments.</p>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-outline import-btn" onclick="openImportModal()">⬆ Import CSV</button>
+          <button class="btn btn-primary" onclick="openAddContactModal()">+ Add Contact</button>
+        </div>
+      </div>
+
+      <!-- Summary Cards -->
+      <div class="metrics-grid" style="margin-bottom:24px;">
+        <div class="metric-card contact-stat-card" id="statTotal" onclick="filterByCard('all')" style="cursor:pointer;">
+          <div class="metric-header"><div class="metric-icon purple">👥</div><div class="metric-trend up" id="statTotalTrend">↑ 12%</div></div>
+          <div class="metric-value" id="statTotalVal">48,293</div>
+          <div class="metric-label">Total Contacts</div>
+        </div>
+        <div class="metric-card contact-stat-card" id="statSubscribed" onclick="filterByCard('subscribed')" style="cursor:pointer;">
+          <div class="metric-header"><div class="metric-icon green">✅</div><div class="metric-trend up" id="statSubTrend">↑ 4%</div></div>
+          <div class="metric-value" id="statSubVal">42,180</div>
+          <div class="metric-label">Subscribed</div>
+        </div>
+        <div class="metric-card contact-stat-card" id="statUnengaged" onclick="filterByCard('cold')" style="cursor:pointer;">
+          <div class="metric-header"><div class="metric-icon orange">⚠️</div><div class="metric-trend down" id="statUnengTrend">↑ 0.2%</div></div>
+          <div class="metric-value" id="statUnengVal">4,820</div>
+          <div class="metric-label">Unengaged / Cold</div>
+        </div>
+        <div class="metric-card contact-stat-card" id="statNew" onclick="filterByCard('new')" style="cursor:pointer;">
+          <div class="metric-header"><div class="metric-icon blue">🆕</div><div class="metric-trend up" id="statNewTrend">This month</div></div>
+          <div class="metric-value" id="statNewVal">1,293</div>
+          <div class="metric-label">New This Month</div>
+        </div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="contacts-toolbar">
+        <div class="search-input-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="contactSearch" placeholder="Search by name or email..." oninput="filterContacts()" />
+        </div>
+        <select class="select-filter" id="contactStatusFilter" onchange="filterContacts()">
+          <option value="">All Status</option>
+          <option value="subscribed">Subscribed</option>
+          <option value="unsubscribed">Unsubscribed</option>
+          <option value="cold">Cold</option>
+        </select>
+        <select class="select-filter" id="contactSegFilter" onchange="filterContacts()">
+          <option value="">All Segments</option>
+          <option value="vip">VIP</option>
+          <option value="lead">Leads</option>
+          <option value="customer">Customers</option>
+        </select>
+      </div>
+
+      <!-- Table -->
+      <div class="contacts-table-wrap">
+        <table class="contacts-table" id="contactsTable">
+          <thead>
+            <tr>
+              <th><input type="checkbox" id="selectAll" /></th>
+              <th onclick="sortTable(1)">Name ↕</th>
+              <th onclick="sortTable(2)">Email ↕</th>
+              <th>Segment</th>
+              <th>Status</th>
+              <th onclick="sortTable(4)">LTV ↕</th>
+              <th>Added</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="contactTbody">
+            <!-- Rows generated by JS below -->
+          </tbody>
+        </table>
+        <div class="contacts-footer">
+          <span id="contactCount">Showing 10 of 48,293 contacts</span>
+          <div class="pagination">
+            <div class="page-btn active">1</div>
+            <div class="page-btn">2</div>
+            <div class="page-btn">3</div>
+            <div class="page-btn">…</div>
+            <div class="page-btn">›</div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- ── Import CSV Modal ─────────────────────────────────────── -->
+<div class="modal-overlay" id="importOverlay" onclick="closeModalOutside(event,'importOverlay')">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title">⬆️ Import Contacts via CSV</div>
+      <button class="modal-close" onclick="closeImportModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="csv-hint">💡 <strong>Tip:</strong> Your CSV should have a header row. Recognised columns: <code>name</code>, <code>email</code>, <code>segment</code>, <code>status</code>, <code>ltv</code>. Any column order is fine.</div>
+
+      <!-- Drop Zone -->
+      <div class="csv-dropzone" id="csvDropzone"
+           ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)"
+           onclick="document.getElementById('csvFileInput').click()">
+        <div class="csv-dropzone-icon">📂</div>
+        <div class="csv-dropzone-title" id="dropzoneTitle">Drag &amp; drop your CSV here</div>
+        <div class="csv-dropzone-sub">or <a onclick="event.stopPropagation();document.getElementById('csvFileInput').click()">browse to upload</a> &nbsp;•&nbsp; .csv files only</div>
+      </div>
+      <input type="file" id="csvFileInput" accept=".csv,text/csv" style="display:none" onchange="handleFileSelect(event)" />
+
+      <!-- Info row (hidden until file parsed) -->
+      <div class="csv-info-row" id="csvInfoRow" style="display:none">
+        <div class="csv-info-card"><strong id="csvRowCount">0</strong><span>Rows detected</span></div>
+        <div class="csv-info-card"><strong id="csvColCount">0</strong><span>Columns found</span></div>
+        <div class="csv-info-card"><strong id="csvValidCount" style="color:var(--success)">0</strong><span>Valid contacts</span></div>
+      </div>
+
+      <!-- Preview (hidden until file parsed) -->
+      <div id="csvPreviewSection" style="display:none">
+        <div class="csv-preview-title">Preview (first 5 rows)</div>
+        <div class="csv-preview-wrap">
+          <table class="csv-preview-table">
+            <thead id="csvPreviewHead"></thead>
+            <tbody id="csvPreviewBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="csvError" style="color:var(--danger);font-size:0.82rem;display:none"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeImportModal()">Cancel</button>
+      <button class="btn btn-primary" id="importConfirmBtn" onclick="confirmImport()" disabled style="opacity:0.5;cursor:not-allowed;">Import Contacts</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Add Contact Modal ─────────────────────────────────────── -->
+<div class="modal-overlay" id="addContactOverlay" onclick="closeModalOutside(event,'addContactOverlay')">
+  <div class="modal-box" style="max-width:480px">
+    <div class="modal-header">
+      <div class="modal-title">➕ Add New Contact</div>
+      <button class="modal-close" onclick="closeAddContactModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="add-fields-grid">
+        <div class="add-field" style="grid-column:1/-1">
+          <label>Full Name *</label>
+          <input type="text" id="acName" placeholder="e.g. Sarah Liu" />
+        </div>
+        <div class="add-field" style="grid-column:1/-1">
+          <label>Email Address *</label>
+          <input type="email" id="acEmail" placeholder="e.g. sarah@example.com" />
+        </div>
+        <div class="add-field">
+          <label>Segment</label>
+          <select id="acSegment">
+            <option value="customer">Customer</option>
+            <option value="lead">Lead</option>
+            <option value="vip">VIP</option>
+          </select>
+        </div>
+        <div class="add-field">
+          <label>Status</label>
+          <select id="acStatus">
+            <option value="subscribed">Subscribed</option>
+            <option value="unsubscribed">Unsubscribed</option>
+            <option value="cold">Cold</option>
+          </select>
+        </div>
+        <div class="add-field">
+          <label>LTV (optional)</label>
+          <input type="text" id="acLtv" placeholder="e.g. $500" />
+        </div>
+      </div>
+      <div id="acError" style="color:var(--danger);font-size:0.82rem;margin-top:4px;"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeAddContactModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="confirmAddContact()">Add Contact</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="contactToast" style="position:fixed;bottom:24px;right:24px;z-index:9999;padding:13px 20px;border-radius:12px;font-size:0.85rem;font-weight:600;opacity:0;pointer-events:none;transition:opacity 0.3s ease;max-width:360px;"></div>
+
+<script src="../js/dashboard.js"></script>
+<script>
+const contactsData = [
+  { name:'Sarah Liu', email:'sarah@techventures.io', segment:'VIP', segTag:'vip', status:'subscribed', ltv:'$4,820', added:'Jan 12, 2025', color:'linear-gradient(135deg,#6366f1,#a855f7)' },
+  { name:'Marcus Reid', email:'marcus@growthlab.co', segment:'Customer', segTag:'customer', status:'subscribed', ltv:'$3,200', added:'Feb 3, 2025', color:'linear-gradient(135deg,#f59e0b,#ef4444)' },
+  { name:'Jessica Park', email:'jpark@scalify.com', segment:'VIP', segTag:'vip', status:'subscribed', ltv:'$6,100', added:'Nov 8, 2024', color:'linear-gradient(135deg,#10b981,#059669)' },
+  { name:'David Kim', email:'d.kim@startup.io', segment:'Lead', segTag:'lead', status:'subscribed', ltv:'$420', added:'Mar 1, 2025', color:'linear-gradient(135deg,#3b82f6,#6366f1)' },
+  { name:'Emma Torres', email:'emma@brandco.net', segment:'Customer', segTag:'customer', status:'subscribed', ltv:'$1,840', added:'Dec 15, 2024', color:'linear-gradient(135deg,#ec4899,#a855f7)' },
+  { name:'Alex Chen', email:'alex.c@launchpad.ai', segment:'Lead', segTag:'lead', status:'cold', ltv:'$80', added:'Mar 5, 2025', color:'linear-gradient(135deg,#f97316,#ef4444)' },
+  { name:'Priya Nair', email:'priya@nexatech.in', segment:'VIP', segTag:'vip', status:'subscribed', ltv:'$8,200', added:'Oct 2, 2024', color:'linear-gradient(135deg,#8b5cf6,#6366f1)' },
+  { name:'James Wright', email:'jwright@ventures.com', segment:'Customer', segTag:'customer', status:'subscribed', ltv:'$2,640', added:'Jan 28, 2025', color:'linear-gradient(135deg,#06b6d4,#3b82f6)' },
+  { name:'Lisa Stone', email:'lisa.s@mediagroup.co', segment:'Lead', segTag:'lead', status:'unsubscribed', ltv:'$0', added:'Feb 14, 2025', color:'linear-gradient(135deg,#6b7280,#9ca3af)' },
+  { name:'Ryan Moore', email:'ryan@cloudbase.io', segment:'Customer', segTag:'customer', status:'subscribed', ltv:'$980', added:'Mar 8, 2025', color:'linear-gradient(135deg,#10b981,#3b82f6)' },
+];
+
+function renderContacts(data) {
+  const tbody = document.getElementById('contactTbody');
+  const statusColors = { subscribed:'status-active', unsubscribed:'status-ended', cold:'status-paused' };
+  tbody.innerHTML = data.map(c => `
+    <tr>
+      <td><input type="checkbox" /></td>
+      <td>
+        <div class="contact-name-cell">
+          <div class="contact-avatar" style="background:${c.color}">${c.name.split(' ').map(n=>n[0]).join('')}</div>
+          <div>
+            <div class="contact-name">${c.name}</div>
+            <div class="contact-since">Since ${c.added}</div>
+          </div>
+        </div>
+      </td>
+      <td>${c.email}</td>
+      <td><span class="tag ${c.segTag==='vip'?'':'lead'===c.segTag?'orange':''}">${c.segment}</span></td>
+      <td><span class="status-badge ${statusColors[c.status]}">${c.status.charAt(0).toUpperCase()+c.status.slice(1)}</span></td>
+      <td style="font-weight:600;color:var(--text-primary)">${c.ltv}</td>
+      <td>${c.added}</td>
+      <td><div class="row-actions"><button class="row-btn" onclick="alert('View profile for ${c.name}')">View</button><button class="row-btn" onclick="alert('Email sent to ${c.email}!')">Email</button></div></td>
+    </tr>
+  `).join('');
+  document.getElementById('contactCount').textContent =
+    `Showing ${data.length} of ${contactsData.length.toLocaleString()} contacts`;
+  updateSummaryCards();
+}
+
+// ── Live summary cards ────────────────────────────────
+function updateSummaryCards() {
+  const total       = contactsData.length;
+  const subscribed  = contactsData.filter(c => c.status === 'subscribed').length;
+  const cold        = contactsData.filter(c => c.status === 'cold').length;
+  const thisMonth   = (() => {
+    const now = new Date();
+    return contactsData.filter(c => {
+      const d = new Date(c.added);
+      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    }).length;
+  })();
+
+  document.getElementById('statTotalVal').textContent    = total.toLocaleString();
+  document.getElementById('statSubVal').textContent      = subscribed.toLocaleString();
+  document.getElementById('statUnengVal').textContent    = cold.toLocaleString();
+  document.getElementById('statNewVal').textContent      = thisMonth.toLocaleString();
+
+  // Update subtitle too
+  document.querySelector('.page-subtitle').textContent =
+    `${total.toLocaleString()} total contacts across all segments.`;
+}
+
+function filterContacts() {
+  const q   = document.getElementById('contactSearch').value.toLowerCase();
+  const s   = document.getElementById('contactStatusFilter').value;
+  const seg = document.getElementById('contactSegFilter').value;
+  renderContacts(contactsData.filter(c =>
+    (!q || c.name.toLowerCase().includes(q) || c.email.toLowerCase().includes(q)) &&
+    (!s || c.status === s) &&
+    (!seg || c.segTag === seg)
+  ));
+}
+
+// ── Card click filter ───────────────────────────────────
+function filterByCard(type) {
+  // Clear search & segment filter
+  document.getElementById('contactSearch').value = '';
+  document.getElementById('contactSegFilter').value = '';
+
+  // Set status filter
+  const statusEl = document.getElementById('contactStatusFilter');
+
+  // Toggle active highlight
+  const cards = { all:'statTotal', subscribed:'statSubscribed', cold:'statUnengaged', new:'statNew' };
+  document.querySelectorAll('.contact-stat-card').forEach(c => c.classList.remove('card-active'));
+  const activeCard = document.getElementById(cards[type]);
+  if (activeCard) activeCard.classList.add('card-active');
+
+  if (type === 'all') {
+    statusEl.value = '';
+    renderContacts(contactsData);
+  } else if (type === 'new') {
+    statusEl.value = '';
+    const now = new Date();
+    renderContacts(contactsData.filter(c => {
+      const d = new Date(c.added);
+      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    }));
+  } else {
+    statusEl.value = type;
+    filterContacts();
+  }
+}
+
+document.getElementById('selectAll').addEventListener('change', function() {
+  document.querySelectorAll('#contactTbody input[type="checkbox"]').forEach(cb => cb.checked = this.checked);
+});
+
+renderContacts(contactsData);
+
+// ── Toast helper ────────────────────────────────────────────
+function showContactToast(msg, type='success') {
+  const t = document.getElementById('contactToast');
+  const styles = {
+    success:{ bg:'rgba(16,185,129,0.15)', border:'rgba(16,185,129,0.3)', color:'#34d399' },
+    error:  { bg:'rgba(239,68,68,0.15)',  border:'rgba(239,68,68,0.3)',  color:'#f87171' },
+    info:   { bg:'rgba(99,102,241,0.15)', border:'rgba(99,102,241,0.3)', color:'#a5b4fc' },
+  };
+  const s = styles[type]||styles.success;
+  Object.assign(t.style, { background:s.bg, border:`1px solid ${s.border}`, color:s.color, opacity:'1' });
+  t.textContent = msg;
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.style.opacity='0', 3500);
+}
+
+// ── Close modal on outside click ────────────────────────────
+function closeModalOutside(e, id) {
+  if (e.target === document.getElementById(id)) {
+    document.getElementById(id).classList.remove('open');
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+// CSV IMPORT
+// ══════════════════════════════════════════════════════════════
+let parsedCsvRows = [];
+
+function openImportModal() {
+  resetImportModal();
+  document.getElementById('importOverlay').classList.add('open');
+}
+function closeImportModal() {
+  document.getElementById('importOverlay').classList.remove('open');
+  resetImportModal();
+}
+function resetImportModal() {
+  parsedCsvRows = [];
+  document.getElementById('csvFileInput').value = '';
+  document.getElementById('dropzoneTitle').textContent = 'Drag & drop your CSV here';
+  document.getElementById('csvInfoRow').style.display = 'none';
+  document.getElementById('csvPreviewSection').style.display = 'none';
+  document.getElementById('csvError').style.display = 'none';
+  document.getElementById('csvDropzone').classList.remove('dragover');
+  const btn = document.getElementById('importConfirmBtn');
+  btn.disabled = true; btn.style.opacity = '0.5'; btn.style.cursor = 'not-allowed';
+}
+
+// Drag & drop
+function handleDragOver(e) { e.preventDefault(); document.getElementById('csvDropzone').classList.add('dragover'); }
+function handleDragLeave()  { document.getElementById('csvDropzone').classList.remove('dragover'); }
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('csvDropzone').classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file) processFile(file);
+}
+function handleFileSelect(e) {
+  const file = e.target.files[0];
+  if (file) processFile(file);
+}
+
+function processFile(file) {
+  const errEl = document.getElementById('csvError');
+  errEl.style.display = 'none';
+  if (!file.name.endsWith('.csv') && file.type !== 'text/csv') {
+    errEl.textContent = '⚠️ Please select a valid .csv file.';
+    errEl.style.display = 'block';
+    return;
+  }
+  document.getElementById('dropzoneTitle').textContent = '📄 ' + file.name;
+  const reader = new FileReader();
+  reader.onload = ev => parseCSV(ev.target.result);
+  reader.readAsText(file);
+}
+
+function parseCSV(text) {
+  const errEl = document.getElementById('csvError');
+  // Split lines, strip BOM
+  const lines = text.replace(/^\uFEFF/, '').split(/\r?\n/).filter(l => l.trim());
+  if (lines.length < 2) {
+    errEl.textContent = '⚠️ CSV must have a header row and at least one data row.';
+    errEl.style.display = 'block'; return;
+  }
+
+  // Parse a single CSV line (handles quoted fields)
+  function parseLine(line) {
+    const result = []; let cur = ''; let inQ = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (ch === '"') { inQ = !inQ; }
+      else if (ch === ',' && !inQ) { result.push(cur.trim()); cur = ''; }
+      else { cur += ch; }
+    }
+    result.push(cur.trim());
+    return result;
+  }
+
+  const headers = parseLine(lines[0]).map(h => h.toLowerCase().replace(/[^a-z0-9]/g,''));
+  const rows = lines.slice(1).map(l => parseLine(l));
+
+  // Map header names to known fields
+  const fieldMap = {
+    name:    headers.findIndex(h => ['name','fullname','contactname'].includes(h)),
+    email:   headers.findIndex(h => ['email','emailaddress','mail'].includes(h)),
+    segment: headers.findIndex(h => ['segment','tag','list'].includes(h)),
+    status:  headers.findIndex(h => ['status','subscriptionstatus'].includes(h)),
+    ltv:     headers.findIndex(h => ['ltv','value','revenue','lifetime'].includes(h)),
+  };
+
+  if (fieldMap.email === -1) {
+    errEl.textContent = '⚠️ Could not find an "email" column in your CSV. Please make sure a column is named "email".';
+    errEl.style.display = 'block'; return;
+  }
+
+  // Build parsed rows
+  parsedCsvRows = rows.map(r => ({
+    name:    fieldMap.name    >= 0 ? r[fieldMap.name]    || '' : '',
+    email:   fieldMap.email   >= 0 ? r[fieldMap.email]   || '' : '',
+    segment: fieldMap.segment >= 0 ? r[fieldMap.segment] || 'Customer' : 'Customer',
+    status:  fieldMap.status  >= 0 ? r[fieldMap.status]  || 'subscribed' : 'subscribed',
+    ltv:     fieldMap.ltv     >= 0 ? r[fieldMap.ltv]     || '$0' : '$0',
+    added:   new Date().toLocaleDateString('en-US', {year:'numeric',month:'short',day:'numeric'}),
+    color:   'linear-gradient(135deg,#6366f1,#a855f7)',
+  })).filter(r => r.email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(r.email));
+
+  const validCount = parsedCsvRows.length;
+
+  // Show info row
+  document.getElementById('csvRowCount').textContent  = rows.length;
+  document.getElementById('csvColCount').textContent  = headers.length;
+  document.getElementById('csvValidCount').textContent = validCount;
+  document.getElementById('csvInfoRow').style.display = 'flex';
+
+  // Build preview (first 5 rows)
+  const previewRows = parsedCsvRows.slice(0, 5);
+  const showCols = ['name','email','segment','status','ltv'];
+  document.getElementById('csvPreviewHead').innerHTML =
+    '<tr>' + showCols.map(c => `<th>${c.charAt(0).toUpperCase()+c.slice(1)}</th>`).join('') + '</tr>';
+  document.getElementById('csvPreviewBody').innerHTML =
+    previewRows.map(r => '<tr>' + showCols.map(c => `<td>${r[c] || '—'}</td>`).join('') + '</tr>').join('');
+  document.getElementById('csvPreviewSection').style.display = '';
+
+  // Enable button
+  const btn = document.getElementById('importConfirmBtn');
+  if (validCount > 0) {
+    btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer';
+    btn.textContent = `Import ${validCount} Contact${validCount > 1 ? 's' : ''}`;
+  } else {
+    errEl.textContent = '⚠️ No valid contacts found. Make sure email addresses are valid.';
+    errEl.style.display = 'block';
+  }
+}
+
+function confirmImport() {
+  if (!parsedCsvRows.length) return;
+  // Normalise segment tags
+  parsedCsvRows.forEach(r => {
+    r.segTag = r.segment.toLowerCase().includes('vip') ? 'vip'
+             : r.segment.toLowerCase().includes('lead') ? 'lead' : 'customer';
+    if (!r.name) r.name = r.email.split('@')[0];
+  });
+  // Prepend to contactsData
+  contactsData.unshift(...parsedCsvRows);
+  renderContacts(contactsData);
+  // Update subtitle
+  document.querySelector('.page-subtitle').textContent =
+    `${contactsData.length.toLocaleString()} total contacts across all segments.`;
+  closeImportModal();
+  showContactToast(`✅ ${parsedCsvRows.length} contact${parsedCsvRows.length>1?'s':''} imported successfully!`, 'success');
+}
+
+// ══════════════════════════════════════════════════════════════
+// ADD CONTACT
+// ══════════════════════════════════════════════════════════════
+function openAddContactModal() {
+  ['acName','acEmail','acLtv'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('acError').textContent = '';
+  document.getElementById('addContactOverlay').classList.add('open');
+  setTimeout(() => document.getElementById('acName').focus(), 150);
+}
+function closeAddContactModal() {
+  document.getElementById('addContactOverlay').classList.remove('open');
+}
+function confirmAddContact() {
+  const name    = document.getElementById('acName').value.trim();
+  const email   = document.getElementById('acEmail').value.trim();
+  const segment = document.getElementById('acSegment').value;
+  const status  = document.getElementById('acStatus').value;
+  const ltv     = document.getElementById('acLtv').value.trim() || '$0';
+  const errEl   = document.getElementById('acError');
+
+  if (!name)  { errEl.textContent = '⚠️ Full name is required.'; return; }
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    errEl.textContent = '⚠️ Please enter a valid email address.'; return;
+  }
+  errEl.textContent = '';
+
+  const segLabel = { customer:'Customer', lead:'Lead', vip:'VIP' }[segment] || 'Customer';
+  const colors = [
+    'linear-gradient(135deg,#6366f1,#a855f7)',
+    'linear-gradient(135deg,#10b981,#3b82f6)',
+    'linear-gradient(135deg,#f59e0b,#ef4444)',
+    'linear-gradient(135deg,#ec4899,#a855f7)',
+    'linear-gradient(135deg,#3b82f6,#6366f1)',
+  ];
+  contactsData.unshift({
+    name, email, segment:segLabel, segTag:segment, status, ltv,
+    added: new Date().toLocaleDateString('en-US', {year:'numeric',month:'short',day:'numeric'}),
+    color: colors[Math.floor(Math.random()*colors.length)],
+  });
+  renderContacts(contactsData);
+  document.querySelector('.page-subtitle').textContent =
+    `${contactsData.length.toLocaleString()} total contacts across all segments.`;
+  closeAddContactModal();
+  showContactToast(`✅ ${name} added to your contacts!`, 'success');
+}
+</script>
+</body>
+</html>

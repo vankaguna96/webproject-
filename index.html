@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NovaMark – AI-Powered Marketing Platform</title>
+  <meta name="description" content="NovaMark is your all-in-one AI-powered marketing platform. Manage campaigns, track analytics, and grow your audience." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/global.css" />
+  <link rel="stylesheet" href="css/landing.css" />
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">
+        <span class="logo-icon">⚡</span>
+        <span>NovaMark</span>
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+        <li><a href="#testimonials">Testimonials</a></li>
+        <li><a href="pages/dashboard.html">Dashboard</a></li>
+      </ul>
+      <div class="nav-actions">
+        <a href="pages/login.html" class="btn btn-ghost">Sign In</a>
+        <a href="pages/register.html" class="btn btn-primary">Get Started</a>
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero" id="home">
+    <div class="hero-bg">
+      <div class="orb orb-1"></div>
+      <div class="orb orb-2"></div>
+      <div class="orb orb-3"></div>
+      <div class="grid-lines"></div>
+    </div>
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        <span>AI-Powered • Trusted by 50K+ Marketers</span>
+      </div>
+      <h1 class="hero-title">
+        Marketing That Thinks <br />
+        <span class="gradient-text">Smarter, Not Harder</span>
+      </h1>
+      <p class="hero-subtitle">
+        Supercharge your campaigns with AI-driven insights, automated workflows,
+        and real-time analytics — all in one beautiful platform.
+      </p>
+      <div class="hero-actions">
+        <a href="pages/register.html" class="btn btn-primary btn-lg">
+          Start Free Trial <span class="btn-arrow">→</span>
+        </a>
+        <a href="#features" class="btn btn-outline btn-lg">
+          See How It Works
+        </a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat">
+          <span class="stat-number">50K+</span>
+          <span class="stat-label">Active Users</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <span class="stat-number">3.2M</span>
+          <span class="stat-label">Campaigns Run</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <span class="stat-number">98%</span>
+          <span class="stat-label">Satisfaction Rate</span>
+        </div>
+      </div>
+    </div>
+    <!-- Hero Visual -->
+    <div class="hero-visual">
+      <div class="dashboard-preview">
+        <div class="preview-bar">
+          <div class="preview-dots">
+            <span class="dot dot-red"></span>
+            <span class="dot dot-yellow"></span>
+            <span class="dot dot-green"></span>
+          </div>
+          <span class="preview-title">NovaMark Dashboard</span>
+        </div>
+        <div class="preview-body">
+          <div class="preview-sidebar">
+            <div class="ps-item active">📊 Analytics</div>
+            <div class="ps-item">📣 Campaigns</div>
+            <div class="ps-item">📧 Email</div>
+            <div class="ps-item">👥 Audience</div>
+          </div>
+          <div class="preview-main">
+            <div class="preview-card">
+              <span>Total Reach</span>
+              <strong>2.4M</strong>
+              <span class="up">↑ 24%</span>
+            </div>
+            <div class="preview-card">
+              <span>Conversions</span>
+              <strong>18.2K</strong>
+              <span class="up">↑ 12%</span>
+            </div>
+            <div class="preview-chart">
+              <div class="chart-bar" style="height:60%"></div>
+              <div class="chart-bar" style="height:80%"></div>
+              <div class="chart-bar" style="height:55%"></div>
+              <div class="chart-bar" style="height:90%"></div>
+              <div class="chart-bar" style="height:70%"></div>
+              <div class="chart-bar" style="height:85%"></div>
+              <div class="chart-bar" style="height:65%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features" id="features">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Features</span>
+        <h2>Everything You Need to <span class="gradient-text">Dominate Marketing</span></h2>
+        <p>Powerful tools designed for modern marketers who demand results.</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card" data-delay="0">
+          <div class="feature-icon">🤖</div>
+          <h3>AI Content Generator</h3>
+          <p>Generate high-converting ad copy, emails, and social posts in seconds using advanced AI.</p>
+          <a href="#" class="feature-link">Learn more →</a>
+        </div>
+        <div class="feature-card" data-delay="100">
+          <div class="feature-icon">📊</div>
+          <h3>Real-Time Analytics</h3>
+          <p>Track every metric that matters with live dashboards and customizable reports.</p>
+          <a href="#" class="feature-link">Learn more →</a>
+        </div>
+        <div class="feature-card featured" data-delay="200">
+          <div class="featured-badge">Most Popular</div>
+          <div class="feature-icon">🎯</div>
+          <h3>Smart Targeting</h3>
+          <p>Reach the right audience at the right time with AI-powered segmentation and targeting.</p>
+          <a href="#" class="feature-link">Learn more →</a>
+        </div>
+        <div class="feature-card" data-delay="300">
+          <div class="feature-icon">📧</div>
+          <h3>Email Automation</h3>
+          <p>Build powerful drip campaigns and automations that nurture leads on autopilot.</p>
+          <a href="#" class="feature-link">Learn more →</a>
+        </div>
+        <div class="feature-card" data-delay="400">
+          <div class="feature-icon">🔗</div>
+          <h3>Multi-Channel Hub</h3>
+          <p>Manage all your marketing channels — social, email, PPC, SEO — from one unified hub.</p>
+          <a href="#" class="feature-link">Learn more →</a>
+        </div>
+        <div class="feature-card" data-delay="500">
+          <div class="feature-icon">🚀</div>
+          <h3>Campaign Launcher</h3>
+          <p>Launch, test, and optimize campaigns in minutes with our intuitive campaign builder.</p>
+          <a href="#" class="feature-link">Learn more →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing Section -->
+  <section class="pricing" id="pricing">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Pricing</span>
+        <h2>Simple, <span class="gradient-text">Transparent Pricing</span></h2>
+        <p>No hidden fees. Cancel anytime. Start free.</p>
+      </div>
+      <div class="pricing-toggle">
+        <span>Monthly</span>
+        <label class="toggle-switch">
+          <input type="checkbox" id="billingToggle" />
+          <span class="slider"></span>
+        </label>
+        <span>Yearly <span class="save-badge">Save 20%</span></span>
+      </div>
+      <div class="pricing-grid">
+        <div class="price-card">
+          <div class="price-header">
+            <h3>Starter</h3>
+            <p>Perfect for individuals and small teams</p>
+          </div>
+          <div class="price-amount">
+            <span class="currency">$</span>
+            <span class="amount" data-monthly="29" data-yearly="23">29</span>
+            <span class="period">/mo</span>
+          </div>
+          <ul class="price-features">
+            <li>✓ Up to 5 campaigns</li>
+            <li>✓ 10K contacts</li>
+            <li>✓ Basic analytics</li>
+            <li>✓ Email support</li>
+            <li class="disabled">✗ AI content generation</li>
+            <li class="disabled">✗ Advanced automation</li>
+          </ul>
+          <a href="pages/register.html" class="btn btn-outline btn-block">Get Started</a>
+        </div>
+        <div class="price-card featured">
+          <div class="price-badge">Most Popular</div>
+          <div class="price-header">
+            <h3>Pro</h3>
+            <p>For growing businesses ready to scale</p>
+          </div>
+          <div class="price-amount">
+            <span class="currency">$</span>
+            <span class="amount" data-monthly="79" data-yearly="63">79</span>
+            <span class="period">/mo</span>
+          </div>
+          <ul class="price-features">
+            <li>✓ Unlimited campaigns</li>
+            <li>✓ 100K contacts</li>
+            <li>✓ Advanced analytics</li>
+            <li>✓ Priority support</li>
+            <li>✓ AI content generation</li>
+            <li>✓ Advanced automation</li>
+          </ul>
+          <a href="pages/register.html" class="btn btn-primary btn-block">Start Free Trial</a>
+        </div>
+        <div class="price-card">
+          <div class="price-header">
+            <h3>Enterprise</h3>
+            <p>For large teams with custom needs</p>
+          </div>
+          <div class="price-amount">
+            <span class="currency">$</span>
+            <span class="amount" data-monthly="199" data-yearly="159">199</span>
+            <span class="period">/mo</span>
+          </div>
+          <ul class="price-features">
+            <li>✓ Unlimited everything</li>
+            <li>✓ Unlimited contacts</li>
+            <li>✓ Custom reporting</li>
+            <li>✓ 24/7 dedicated support</li>
+            <li>✓ AI content generation</li>
+            <li>✓ White-label options</li>
+          </ul>
+          <a href="#" class="btn btn-outline btn-block">Contact Sales</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section class="testimonials" id="testimonials">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Testimonials</span>
+        <h2>Loved by <span class="gradient-text">Marketers Worldwide</span></h2>
+      </div>
+      <div class="testimonials-grid">
+        <div class="testimonial-card">
+          <div class="stars">★★★★★</div>
+          <p>"NovaMark transformed our entire marketing strategy. Our conversion rates jumped 45% in just 3 months!"</p>
+          <div class="testimonial-author">
+            <div class="author-avatar" style="background: linear-gradient(135deg, #6366f1, #a855f7)">SL</div>
+            <div>
+              <strong>Sarah Liu</strong>
+              <span>CMO, TechVentures Inc.</span>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card featured">
+          <div class="stars">★★★★★</div>
+          <p>"The AI content generator alone saves us 20+ hours per week. It's like having a full marketing team in a box. Absolutely phenomenal."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar" style="background: linear-gradient(135deg, #f59e0b, #ef4444)">MR</div>
+            <div>
+              <strong>Marcus Reid</strong>
+              <span>Founder, GrowthLab</span>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="stars">★★★★★</div>
+          <p>"Best marketing platform investment we've ever made. The ROI tracking features are incredibly detailed and accurate."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar" style="background: linear-gradient(135deg, #10b981, #059669)">JP</div>
+            <div>
+              <strong>Jessica Park</strong>
+              <span>Marketing Director, Scalify</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta-section">
+    <div class="container">
+      <div class="cta-card">
+        <div class="cta-orb"></div>
+        <h2>Ready to Supercharge Your Marketing?</h2>
+        <p>Join 50,000+ marketers already growing with NovaMark. Start your free 14-day trial today.</p>
+        <div class="cta-actions">
+          <a href="pages/register.html" class="btn btn-primary btn-lg">Start Free Trial</a>
+          <a href="pages/login.html" class="btn btn-ghost btn-lg">Sign In</a>
+        </div>
+        <p class="cta-note">No credit card required • Cancel anytime</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="nav-logo">
+            <span class="logo-icon">⚡</span>
+            <span>NovaMark</span>
+          </a>
+          <p>AI-powered marketing platform for modern businesses.</p>
+          <div class="social-links">
+            <a href="#" aria-label="Twitter">𝕏</a>
+            <a href="#" aria-label="LinkedIn">in</a>
+            <a href="#" aria-label="Facebook">f</a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>Product</h4>
+          <ul>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#pricing">Pricing</a></li>
+            <li><a href="pages/dashboard.html">Dashboard</a></li>
+            <li><a href="#">API Docs</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Blog</a></li>
+            <li><a href="#">Careers</a></li>
+            <li><a href="#">Press</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Support</h4>
+          <ul>
+            <li><a href="#">Help Center</a></li>
+            <li><a href="#">Contact Us</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 NovaMark. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

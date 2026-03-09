@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard – NovaMark</title>
+  <meta name="description" content="Your NovaMark marketing dashboard. Track campaigns, analytics, and growth." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/global.css" />
+  <link rel="stylesheet" href="../css/dashboard.css" />
+</head>
+<body>
+<div class="dashboard-layout">
+
+  <!-- Sidebar Overlay (mobile) -->
+  <div class="sidebar-overlay" id="sidebarOverlay" style="position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:99;display:none;backdrop-filter:blur(4px)"></div>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a href="../index.html" class="sidebar-logo">
+        <span class="logo-icon">⚡</span>
+        <span>NovaMark</span>
+      </a>
+    </div>
+
+    <nav class="sidebar-nav" aria-label="Main navigation">
+      <span class="nav-section-label">Main</span>
+      <a href="dashboard.html" class="sidebar-link" id="link-dashboard">
+        <span class="link-icon">📊</span>
+        <span>Dashboard</span>
+      </a>
+      <a href="campaigns.html" class="sidebar-link" id="link-campaigns">
+        <span class="link-icon">📣</span>
+        <span>Campaigns</span>
+        <span class="link-badge">3</span>
+      </a>
+      <a href="analytics.html" class="sidebar-link" id="link-analytics">
+        <span class="link-icon">📈</span>
+        <span>Analytics</span>
+      </a>
+      <a href="email.html" class="sidebar-link" id="link-email">
+        <span class="link-icon">📧</span>
+        <span>Email Center</span>
+      </a>
+
+      <span class="nav-section-label">Audience</span>
+      <a href="contacts.html" class="sidebar-link" id="link-contacts">
+        <span class="link-icon">👥</span>
+        <span>Contacts</span>
+      </a>
+      <a href="segments.html" class="sidebar-link" id="link-segments">
+        <span class="link-icon">🎯</span>
+        <span>Segments</span>
+      </a>
+
+      <span class="nav-section-label">Settings</span>
+      <a href="settings.html" class="sidebar-link" id="link-settings">
+        <span class="link-icon">⚙️</span>
+        <span>Settings</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-profile" id="userProfileBtn">
+        <div class="user-avatar" id="sidebarUserAvatar">U</div>
+        <div class="user-info">
+          <strong id="sidebarUserName">Loading...</strong>
+          <span id="sidebarUserEmail">...</span>
+        </div>
+        <span class="user-chevron">›</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Topbar -->
+    <header class="topbar">
+      <button class="icon-btn" id="sidebarToggle" aria-label="Toggle sidebar">☰</button>
+      <div class="topbar-search">
+        <span class="search-icon">🔍</span>
+        <input type="search" placeholder="Search campaigns, contacts..." aria-label="Search" />
+      </div>
+      <div class="topbar-actions">
+        <span style="color:var(--text-muted);font-size:0.8rem;" id="currentTime"></span>
+        <a href="#" class="icon-btn" aria-label="Notifications">
+          🔔
+          <span class="notif-dot"></span>
+        </a>
+        <button class="icon-btn" id="logoutBtn" title="Sign out" aria-label="Sign out">🚪</button>
+      </div>
+    </header>
+
+    <!-- Dashboard Body -->
+    <main class="dashboard-body">
+      <!-- Page Header -->
+      <div class="page-header">
+        <div>
+          <h1 class="page-title" id="topbarGreeting">Good morning 👋</h1>
+          <p class="page-subtitle">Here's what's happening with your marketing today.</p>
+        </div>
+        <div class="page-actions">
+          <a href="campaigns.html" class="btn btn-outline">View Campaigns</a>
+          <a href="campaigns.html" class="btn btn-primary">+ New Campaign</a>
+        </div>
+      </div>
+
+      <!-- Live Pulse -->
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:24px;padding:12px 18px;background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.15);border-radius:12px;max-width:340px;">
+        <span style="width:8px;height:8px;border-radius:50%;background:#10b981;box-shadow:0 0 8px #10b981;flex-shrink:0;animation:pulse-glow 2s ease infinite;"></span>
+        <span style="font-size:0.82rem;color:var(--text-secondary);">
+          <strong style="color:#10b981;" class="live-metric-value">1,247</strong> visitors on your pages right now
+        </span>
+      </div>
+
+      <!-- Metric Cards -->
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-header">
+            <div class="metric-icon purple">📊</div>
+            <div class="metric-trend up">↑ 18.2%</div>
+          </div>
+          <div class="metric-value">$124.5K</div>
+          <div class="metric-label">Total Revenue</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-header">
+            <div class="metric-icon blue">👥</div>
+            <div class="metric-trend up">↑ 12.8%</div>
+          </div>
+          <div class="metric-value">48,293</div>
+          <div class="metric-label">Total Contacts</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-header">
+            <div class="metric-icon green">🎯</div>
+            <div class="metric-trend up">↑ 7.4%</div>
+          </div>
+          <div class="metric-value">3.24%</div>
+          <div class="metric-label">Conv. Rate</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-header">
+            <div class="metric-icon orange">📣</div>
+            <div class="metric-trend down">↓ 2.1%</div>
+          </div>
+          <div class="metric-value">24</div>
+          <div class="metric-label">Active Campaigns</div>
+        </div>
+      </div>
+
+      <!-- Charts -->
+      <div class="charts-grid">
+        <!-- Revenue Chart -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <div>
+              <div class="chart-title">Revenue & Lead Growth</div>
+              <div class="chart-subtitle">Monthly overview for 2025</div>
+            </div>
+            <div class="chart-filters">
+              <button class="filter-btn active">12M</button>
+              <button class="filter-btn">6M</button>
+              <button class="filter-btn">3M</button>
+            </div>
+          </div>
+          <div style="display:flex;gap:16px;margin-bottom:16px;">
+            <span style="font-size:0.75rem;color:var(--text-muted);display:flex;align-items:center;gap:6px;">
+              <span style="width:12px;height:3px;background:#6366f1;display:inline-block;border-radius:4px;"></span>
+              Revenue
+            </span>
+            <span style="font-size:0.75rem;color:var(--text-muted);display:flex;align-items:center;gap:6px;">
+              <span style="width:12px;height:3px;background:#a855f7;display:inline-block;border-radius:4px;"></span>
+              Leads
+            </span>
+          </div>
+          <div class="chart-canvas-wrapper">
+            <canvas id="revenueChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Traffic Donut -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <div>
+              <div class="chart-title">Traffic Sources</div>
+              <div class="chart-subtitle">This month</div>
+            </div>
+          </div>
+          <div class="donut-chart-wrapper">
+            <div class="donut-chart" style="position:relative;width:160px;height:160px;">
+              <canvas id="trafficChart" width="160" height="160"></canvas>
+              <div class="donut-inner">
+                <span class="donut-center-value">42%</span>
+                <span class="donut-center-label">Organic</span>
+              </div>
+            </div>
+            <div class="donut-legend">
+              <div class="legend-item">
+                <div class="legend-dot" style="background:#6366f1;"></div>
+                <span class="legend-name">Organic Search</span>
+                <span class="legend-value">42%</span>
+              </div>
+              <div class="legend-item">
+                <div class="legend-dot" style="background:#a855f7;"></div>
+                <span class="legend-name">Paid Ads</span>
+                <span class="legend-value">28%</span>
+              </div>
+              <div class="legend-item">
+                <div class="legend-dot" style="background:#3b82f6;"></div>
+                <span class="legend-name">Social Media</span>
+                <span class="legend-value">18%</span>
+              </div>
+              <div class="legend-item">
+                <div class="legend-dot" style="background:#10b981;"></div>
+                <span class="legend-name">Email / Referral</span>
+                <span class="legend-value">12%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Row -->
+      <div class="dashboard-bottom">
+        <!-- Top Campaigns Table -->
+        <div class="data-table-card">
+          <div class="table-header">
+            <h2 class="table-title">🏆 Top Campaigns</h2>
+            <a href="campaigns.html" class="btn btn-ghost" style="font-size:0.8rem;padding:6px 12px;">View all</a>
+          </div>
+          <table class="data-table" aria-label="Top campaigns">
+            <thead>
+              <tr>
+                <th>Campaign</th>
+                <th>Status</th>
+                <th>Reach</th>
+                <th>ROI</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Summer Sale 2025</strong></td>
+                <td><span class="status-badge status-active">Active</span></td>
+                <td>245K</td>
+                <td style="color:var(--success);font-weight:600;">+324%</td>
+              </tr>
+              <tr>
+                <td><strong>Product Launch Q2</strong></td>
+                <td><span class="status-badge status-active">Active</span></td>
+                <td>128K</td>
+                <td style="color:var(--success);font-weight:600;">+218%</td>
+              </tr>
+              <tr>
+                <td><strong>Email Retargeting</strong></td>
+                <td><span class="status-badge status-paused">Paused</span></td>
+                <td>89K</td>
+                <td style="color:var(--warning);font-weight:600;">+95%</td>
+              </tr>
+              <tr>
+                <td><strong>Brand Awareness</strong></td>
+                <td><span class="status-badge status-ended">Ended</span></td>
+                <td>312K</td>
+                <td style="color:var(--text-muted);font-weight:600;">+48%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Activity Feed -->
+        <div class="data-table-card">
+          <div class="table-header">
+            <h2 class="table-title">⚡ Recent Activity</h2>
+          </div>
+          <div class="activity-feed">
+            <div class="activity-item">
+              <div class="activity-icon success">✅</div>
+              <div class="activity-body">
+                <div class="activity-title">Campaign "Summer Sale" went live</div>
+                <div class="activity-desc">Targeting 18-35 age group, 3 ad sets</div>
+              </div>
+              <span class="activity-time">2m ago</span>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon info">📧</div>
+              <div class="activity-body">
+                <div class="activity-title">Email sequence completed</div>
+                <div class="activity-desc">3,420 emails delivered – 42% open rate</div>
+              </div>
+              <span class="activity-time">18m ago</span>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon purple">🎯</div>
+              <div class="activity-body">
+                <div class="activity-title">New audience segment created</div>
+                <div class="activity-desc">"High-intent buyers" – 8,240 contacts</div>
+              </div>
+              <span class="activity-time">1h ago</span>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon warning">⚠️</div>
+              <div class="activity-body">
+                <div class="activity-title">Budget alert triggered</div>
+                <div class="activity-desc">Campaign "Email Retargeting" at 90% budget</div>
+              </div>
+              <span class="activity-time">3h ago</span>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon success">💰</div>
+              <div class="activity-body">
+                <div class="activity-title">Revenue milestone reached</div>
+                <div class="activity-desc">$100K monthly revenue target hit! 🎉</div>
+              </div>
+              <span class="activity-time">5h ago</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script src="../js/dashboard.js"></script>
+</body>
+</html>

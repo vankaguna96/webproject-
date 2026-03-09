@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Campaigns – NovaMark</title>
+  <meta name="description" content="Manage and track all your marketing campaigns in one place." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/global.css" />
+  <link rel="stylesheet" href="../css/dashboard.css" />
+  <style>
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(8px);
+      z-index: 500;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 36px;
+      width: 100%;
+      max-width: 520px;
+      animation: fadeInUp 0.3s ease;
+    }
+    .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+    .modal-title { font-family: var(--font-heading); font-size: 1.3rem; font-weight: 800; }
+    .modal-close {
+      width: 32px; height: 32px;
+      border-radius: var(--radius-md);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; background: var(--bg-glass);
+      border: 1px solid var(--border); color: var(--text-secondary);
+      font-size: 1.1rem; transition: all var(--transition);
+    }
+    .modal-close:hover { background: var(--bg-glass-hover); color: var(--text-primary); }
+    .modal-form { display: flex; flex-direction: column; gap: 16px; }
+    .modal-form label { font-size: 0.82rem; font-weight: 600; color: var(--text-secondary); }
+    .modal-form input,
+    .modal-form select,
+    .modal-form textarea {
+      width: 100%; padding: 10px 14px;
+      background: var(--bg-surface); border: 1px solid var(--border);
+      border-radius: var(--radius-md); color: var(--text-primary);
+      font-size: 0.9rem; font-family: var(--font-body);
+      outline: none; transition: all var(--transition);
+    }
+    .modal-form input:focus,
+    .modal-form select:focus,
+    .modal-form textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+    }
+    .modal-form textarea { resize: vertical; min-height: 80px; }
+  </style>
+</head>
+<body>
+<div class="dashboard-layout">
+
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a href="../index.html" class="sidebar-logo">
+        <span class="logo-icon">⚡</span>
+        <span>NovaMark</span>
+      </a>
+    </div>
+    <nav class="sidebar-nav">
+      <span class="nav-section-label">Main</span>
+      <a href="dashboard.html" class="sidebar-link"><span class="link-icon">📊</span><span>Dashboard</span></a>
+      <a href="campaigns.html" class="sidebar-link active"><span class="link-icon">📣</span><span>Campaigns</span></a>
+      <a href="analytics.html" class="sidebar-link"><span class="link-icon">📈</span><span>Analytics</span></a>
+      <a href="email.html" class="sidebar-link"><span class="link-icon">📧</span><span>Email Center</span></a>
+      <span class="nav-section-label">Audience</span>
+      <a href="contacts.html" class="sidebar-link"><span class="link-icon">👥</span><span>Contacts</span></a>
+      <a href="segments.html" class="sidebar-link"><span class="link-icon">🎯</span><span>Segments</span></a>
+      <span class="nav-section-label">Settings</span>
+      <a href="settings.html" class="sidebar-link"><span class="link-icon">⚙️</span><span>Settings</span></a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-profile">
+        <div class="user-avatar" id="sidebarUserAvatar">U</div>
+        <div class="user-info">
+          <strong id="sidebarUserName">Loading...</strong>
+          <span id="sidebarUserEmail">...</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Topbar -->
+    <header class="topbar">
+      <button class="icon-btn" id="sidebarToggle">☰</button>
+      <div class="topbar-search">
+        <span class="search-icon">🔍</span>
+        <input type="search" placeholder="Search campaigns..." />
+      </div>
+      <div class="topbar-actions">
+        <span style="color:var(--text-muted);font-size:0.8rem;" id="currentTime"></span>
+        <a href="#" class="icon-btn">🔔<span class="notif-dot"></span></a>
+        <button class="icon-btn" id="logoutBtn">🚪</button>
+      </div>
+    </header>
+
+    <!-- Body -->
+    <main class="dashboard-body campaigns-page">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">📣 Campaigns</h1>
+          <p class="page-subtitle">Create, manage and track all your marketing campaigns.</p>
+        </div>
+        <div class="page-actions page-tools">
+          <div class="search-input-wrap">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="campaignSearch" placeholder="Search campaigns..." />
+          </div>
+          <select class="select-filter" id="statusFilter">
+            <option value="">All Status</option>
+            <option value="active">Active</option>
+            <option value="paused">Paused</option>
+            <option value="ended">Ended</option>
+          </select>
+          <button class="btn btn-primary" id="newCampaignBtn">+ New Campaign</button>
+        </div>
+      </div>
+
+      <!-- Quick Stats -->
+      <div class="quick-stats">
+        <div class="quick-stat">
+          <div class="quick-stat-value" style="color:var(--success)">14</div>
+          <div class="quick-stat-label">Active</div>
+        </div>
+        <div class="quick-stat">
+          <div class="quick-stat-value" style="color:var(--warning)">6</div>
+          <div class="quick-stat-label">Paused</div>
+        </div>
+        <div class="quick-stat">
+          <div class="quick-stat-value" style="color:var(--text-muted)">4</div>
+          <div class="quick-stat-label">Ended</div>
+        </div>
+        <div class="quick-stat">
+          <div class="quick-stat-value">$24.8K</div>
+          <div class="quick-stat-label">Total Spend</div>
+        </div>
+        <div class="quick-stat">
+          <div class="quick-stat-value" style="color:var(--success)">+312%</div>
+          <div class="quick-stat-label">Avg. ROI</div>
+        </div>
+      </div>
+
+      <!-- Campaign Cards -->
+      <div class="campaign-cards" id="campaignCardsContainer">
+
+        <div class="campaign-card" data-status="active">
+          <div class="campaign-card-header">
+            <div class="campaign-icon" style="background:rgba(99,102,241,0.15);">🚀</div>
+            <div class="campaign-card-info">
+              <h3>Summer Sale 2025</h3>
+              <p>Paid Social • Facebook & Instagram</p>
+            </div>
+            <span class="status-badge status-active">Active</span>
+          </div>
+          <div class="progress-bar-wrap">
+            <div class="progress-label">
+              <span>Budget used – $8.2K of $10K</span>
+              <span>82%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" data-width="82%" style="width:82%"></div>
+            </div>
+          </div>
+          <div class="campaign-stats">
+            <div class="campaign-stat">
+              <strong>245K</strong>
+              <span>Reach</span>
+            </div>
+            <div class="campaign-stat">
+              <strong>3.8%</strong>
+              <span>CTR</span>
+            </div>
+            <div class="campaign-stat">
+              <strong>1,840</strong>
+              <span>Conversions</span>
+            </div>
+            <div class="campaign-stat">
+              <strong style="color:var(--success)">+324%</strong>
+              <span>ROI</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="campaign-card" data-status="active">
+          <div class="campaign-card-header">
+            <div class="campaign-icon" style="background:rgba(59,130,246,0.15);">🎯</div>
+            <div class="campaign-card-info">
+              <h3>Product Launch Q2</h3>
+              <p>Google Ads • Search & Display</p>
+            </div>
+            <span class="status-badge status-active">Active</span>
+          </div>
+          <div class="progress-bar-wrap">
+            <div class="progress-label">
+              <span>Budget used – $3.5K of $7K</span>
+              <span>50%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" data-width="50%" style="width:50%"></div>
+            </div>
+          </div>
+          <div class="campaign-stats">
+            <div class="campaign-stat"><strong>128K</strong><span>Reach</span></div>
+            <div class="campaign-stat"><strong>5.2%</strong><span>CTR</span></div>
+            <div class="campaign-stat"><strong>982</strong><span>Conversions</span></div>
+            <div class="campaign-stat"><strong style="color:var(--success)">+218%</strong><span>ROI</span></div>
+          </div>
+        </div>
+
+        <div class="campaign-card" data-status="paused">
+          <div class="campaign-card-header">
+            <div class="campaign-icon" style="background:rgba(245,158,11,0.15);">📧</div>
+            <div class="campaign-card-info">
+              <h3>Email Retargeting</h3>
+              <p>Email Marketing • Drip Sequence</p>
+            </div>
+            <span class="status-badge status-paused">Paused</span>
+          </div>
+          <div class="progress-bar-wrap">
+            <div class="progress-label">
+              <span>Budget used – $4.5K of $5K</span>
+              <span>90%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" data-width="90%" style="width:90%;background:linear-gradient(90deg,#f59e0b,#ef4444)"></div>
+            </div>
+          </div>
+          <div class="campaign-stats">
+            <div class="campaign-stat"><strong>89K</strong><span>Reach</span></div>
+            <div class="campaign-stat"><strong>42%</strong><span>Open Rate</span></div>
+            <div class="campaign-stat"><strong>540</strong><span>Conversions</span></div>
+            <div class="campaign-stat"><strong style="color:var(--warning)">+95%</strong><span>ROI</span></div>
+          </div>
+        </div>
+
+        <div class="campaign-card" data-status="active">
+          <div class="campaign-card-header">
+            <div class="campaign-icon" style="background:rgba(16,185,129,0.15);">📱</div>
+            <div class="campaign-card-info">
+              <h3>Social Awareness Drive</h3>
+              <p>Organic Social • LinkedIn & Twitter</p>
+            </div>
+            <span class="status-badge status-active">Active</span>
+          </div>
+          <div class="progress-bar-wrap">
+            <div class="progress-label">
+              <span>Budget used – $1.2K of $3K</span>
+              <span>40%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" data-width="40%" style="width:40%;background:linear-gradient(90deg,#10b981,#34d399)"></div>
+            </div>
+          </div>
+          <div class="campaign-stats">
+            <div class="campaign-stat"><strong>310K</strong><span>Impressions</span></div>
+            <div class="campaign-stat"><strong>2.1%</strong><span>Engagement</span></div>
+            <div class="campaign-stat"><strong>428</strong><span>Follows</span></div>
+            <div class="campaign-stat"><strong style="color:var(--success)">+180%</strong><span>ROI</span></div>
+          </div>
+        </div>
+
+        <div class="campaign-card" data-status="ended">
+          <div class="campaign-card-header">
+            <div class="campaign-icon" style="background:rgba(107,114,128,0.15);">🏷️</div>
+            <div class="campaign-card-info">
+              <h3>Brand Awareness Q1</h3>
+              <p>Display Ads • Programmatic</p>
+            </div>
+            <span class="status-badge status-ended">Ended</span>
+          </div>
+          <div class="progress-bar-wrap">
+            <div class="progress-label">
+              <span>Budget used – $12K of $12K</span>
+              <span>100%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" data-width="100%" style="width:100%;background:var(--text-muted)"></div>
+            </div>
+          </div>
+          <div class="campaign-stats">
+            <div class="campaign-stat"><strong>1.2M</strong><span>Impressions</span></div>
+            <div class="campaign-stat"><strong>0.8%</strong><span>CTR</span></div>
+            <div class="campaign-stat"><strong>320</strong><span>Conversions</span></div>
+            <div class="campaign-stat"><strong style="color:var(--text-muted)">+48%</strong><span>ROI</span></div>
+          </div>
+        </div>
+
+        <div class="campaign-card" data-status="active" id="addCampaignPlaceholder" style="border:2px dashed var(--border);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;min-height:200px;background:transparent;transition:all var(--transition);">
+          <span style="font-size:2.5rem;">➕</span>
+          <span style="font-weight:600;color:var(--text-muted)">Create New Campaign</span>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- New Campaign Modal -->
+<div class="modal-overlay" id="campaignModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title">🚀 New Campaign</h2>
+      <button class="modal-close" id="closeModal">✕</button>
+    </div>
+    <form class="modal-form" id="newCampaignForm">
+      <div>
+        <label>Campaign Name</label>
+        <input type="text" id="newCampName" placeholder="e.g. Summer Sale 2025" required />
+      </div>
+      <div>
+        <label>Campaign Type</label>
+        <select id="newCampType">
+          <option value="paid-social">Paid Social</option>
+          <option value="google-ads">Google Ads</option>
+          <option value="email">Email Marketing</option>
+          <option value="seo">SEO Content</option>
+          <option value="display">Display Ads</option>
+        </select>
+      </div>
+      <div>
+        <label>Total Budget ($)</label>
+        <input type="number" id="newCampBudget" placeholder="5000" min="100" />
+      </div>
+      <div>
+        <label>Target Audience</label>
+        <input type="text" id="newCampAudience" placeholder="e.g. 25-45 age, tech-savvy" />
+      </div>
+      <div>
+        <label>Campaign Goal</label>
+        <textarea id="newCampGoal" placeholder="What do you want to achieve with this campaign?"></textarea>
+      </div>
+      <div style="display:flex;gap:12px;justify-content:flex-end;">
+        <button type="button" class="btn btn-ghost" id="cancelModal">Cancel</button>
+        <button type="submit" class="btn btn-primary">Launch Campaign 🚀</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<style>
+  .camp-toast {
+    position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+    padding: 14px 22px; border-radius: 12px;
+    background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3);
+    color: #34d399; font-size: 0.88rem; font-weight: 600;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.3s ease; max-width: 340px;
+  }
+  .camp-toast.show { opacity: 1; pointer-events: all; }
+</style>
+<div class="camp-toast" id="campToast"></div>
+
+<script src="../js/dashboard.js"></script>
+<script>
+  // ── Toast helper ────────────────────────────────────────
+  function showCampToast(msg) {
+    const t = document.getElementById('campToast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._t);
+    t._t = setTimeout(() => t.classList.remove('show'), 3500);
+  }
+
+  // ── Type → label + icon map ─────────────────────────────
+  const typeMap = {
+    'paid-social':  { label: 'Paid Social • Facebook & Instagram',   icon: '🚀', bg: 'rgba(99,102,241,0.15)'  },
+    'google-ads':   { label: 'Google Ads • Search & Display',         icon: '🎯', bg: 'rgba(59,130,246,0.15)'  },
+    'email':        { label: 'Email Marketing • Drip Sequence',        icon: '📧', bg: 'rgba(245,158,11,0.15)'  },
+    'seo':          { label: 'SEO Content • Organic Search',           icon: '📝', bg: 'rgba(16,185,129,0.15)'  },
+    'display':      { label: 'Display Ads • Programmatic',             icon: '🖥️', bg: 'rgba(107,114,128,0.15)' },
+  };
+
+  // ── Build a campaign card element ───────────────────────
+  function buildCampaignCard(c) {
+    const t = typeMap[c.type] || typeMap['display'];
+    const budgetNum = parseInt(c.budget) || 0;
+    const card = document.createElement('div');
+    card.className = 'campaign-card';
+    card.dataset.status = 'active';
+    card.dataset.id = c.id;
+    card.innerHTML = `
+      <div class="campaign-card-header">
+        <div class="campaign-icon" style="background:${t.bg}">${t.icon}</div>
+        <div class="campaign-card-info">
+          <h3>${c.name}</h3>
+          <p>${t.label}</p>
+        </div>
+        <span class="status-badge status-active">Active</span>
+      </div>
+      <div class="progress-bar-wrap">
+        <div class="progress-label">
+          <span>Budget – $0 of $${budgetNum.toLocaleString()}</span>
+          <span>0%</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width:0%"></div>
+        </div>
+      </div>
+      ${c.audience ? `<p style="font-size:0.78rem;color:var(--text-muted);margin:8px 0 0">🎯 Audience: ${c.audience}</p>` : ''}
+      ${c.goal ? `<p style="font-size:0.78rem;color:var(--text-muted);margin:4px 0 0">📌 Goal: ${c.goal}</p>` : ''}
+      <div class="campaign-stats" style="margin-top:12px">
+        <div class="campaign-stat"><strong>—</strong><span>Reach</span></div>
+        <div class="campaign-stat"><strong>—</strong><span>CTR</span></div>
+        <div class="campaign-stat"><strong>—</strong><span>Conversions</span></div>
+        <div class="campaign-stat"><strong style="color:var(--text-muted)">New</strong><span>ROI</span></div>
+      </div>
+    `;
+    return card;
+  }
+
+  // ── Insert card before the placeholder ─────────────────
+  function insertCard(c) {
+    const placeholder = document.getElementById('addCampaignPlaceholder');
+    const container   = document.getElementById('campaignCardsContainer');
+    container.insertBefore(buildCampaignCard(c), placeholder);
+  }
+
+  // ── Load saved campaigns from localStorage ──────────────
+  function loadSavedCampaigns() {
+    const saved = JSON.parse(localStorage.getItem('novamark_campaigns') || '[]');
+    saved.forEach(c => insertCard(c));
+  }
+
+  // ── Modal logic ─────────────────────────────────────────
+  const modal = document.getElementById('campaignModal');
+  const openModal  = () => modal.classList.add('open');
+  const closeModal = () => modal.classList.remove('open');
+
+  document.getElementById('newCampaignBtn').addEventListener('click', openModal);
+  document.getElementById('addCampaignPlaceholder').addEventListener('click', openModal);
+  document.getElementById('closeModal').addEventListener('click', closeModal);
+  document.getElementById('cancelModal').addEventListener('click', closeModal);
+  modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+
+  document.getElementById('addCampaignPlaceholder').addEventListener('mouseenter', (e) => {
+    e.currentTarget.style.borderColor = 'rgba(99,102,241,0.5)';
+    e.currentTarget.style.background  = 'rgba(99,102,241,0.04)';
+  });
+  document.getElementById('addCampaignPlaceholder').addEventListener('mouseleave', (e) => {
+    e.currentTarget.style.borderColor = '';
+    e.currentTarget.style.background  = '';
+  });
+
+  // ── Form submit → create campaign ──────────────────────
+  document.getElementById('newCampaignForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name     = document.getElementById('newCampName').value.trim();
+    const type     = document.getElementById('newCampType').value;
+    const budget   = document.getElementById('newCampBudget').value;
+    const audience = document.getElementById('newCampAudience').value.trim();
+    const goal     = document.getElementById('newCampGoal').value.trim();
+
+    if (!name) {
+      document.getElementById('newCampName').focus();
+      return;
+    }
+
+    const campaign = { id: Date.now().toString(), name, type, budget, audience, goal };
+
+    // Save to localStorage
+    const saved = JSON.parse(localStorage.getItem('novamark_campaigns') || '[]');
+    saved.push(campaign);
+    localStorage.setItem('novamark_campaigns', JSON.stringify(saved));
+
+    // Add card to grid
+    insertCard(campaign);
+
+    closeModal();
+    document.getElementById('newCampaignForm').reset();
+    showCampToast(`🎉 Campaign "${name}" launched successfully!`);
+  });
+
+  // ── Filter logic ────────────────────────────────────────
+  function applyFilters() {
+    const q      = (document.getElementById('campaignSearch').value || '').toLowerCase();
+    const status = document.getElementById('statusFilter').value;
+    document.querySelectorAll('.campaign-card:not(#addCampaignPlaceholder)').forEach(card => {
+      const name   = (card.querySelector('h3')?.textContent || '').toLowerCase();
+      const cStat  = card.dataset.status || '';
+      const matchQ = !q || name.includes(q);
+      const matchS = !status || cStat === status;
+      card.style.display = (matchQ && matchS) ? '' : 'none';
+    });
+  }
+
+  document.getElementById('campaignSearch').addEventListener('input',  applyFilters);
+  document.getElementById('statusFilter').addEventListener('change', applyFilters);
+
+  // ── Init ────────────────────────────────────────────────
+  loadSavedCampaigns();
+</script>
+</body>
+</html>

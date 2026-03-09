@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Segments – NovaMark</title>
+  <meta name="description" content="Create and manage audience segments for precise marketing targeting." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/global.css" />
+  <link rel="stylesheet" href="../css/dashboard.css" />
+  <style>
+    .segment-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:20px; }
+    .segment-card {
+      background:var(--bg-card); border:1px solid var(--border);
+      border-radius:var(--radius-lg); padding:24px;
+      position:relative; overflow:hidden;
+      transition:all var(--transition); cursor:default;
+    }
+    .segment-card:hover { transform:translateY(-3px); border-color:var(--border-active); box-shadow:var(--shadow-md); }
+    .segment-card::before { content:''; position:absolute; top:0;left:0;right:0; height:3px; }
+    .segment-card.purple::before { background:linear-gradient(90deg,#6366f1,#a855f7); }
+    .segment-card.blue::before   { background:linear-gradient(90deg,#3b82f6,#6366f1); }
+    .segment-card.green::before  { background:linear-gradient(90deg,#10b981,#34d399); }
+    .segment-card.orange::before { background:linear-gradient(90deg,#f59e0b,#f97316); }
+    .segment-card.pink::before   { background:linear-gradient(90deg,#ec4899,#a855f7); }
+    .segment-card.cyan::before   { background:linear-gradient(90deg,#06b6d4,#3b82f6); }
+    .segment-header { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:16px; }
+    .segment-icon { width:44px; height:44px; border-radius:var(--radius-md); display:flex; align-items:center; justify-content:center; font-size:1.3rem; flex-shrink:0; }
+    .segment-name { font-family:var(--font-heading); font-weight:700; font-size:1rem; margin-bottom:3px; }
+    .segment-desc { font-size:0.78rem; color:var(--text-muted); line-height:1.5; }
+    .segment-count { font-family:var(--font-heading); font-size:1.8rem; font-weight:900; letter-spacing:-0.5px; margin-bottom:4px; }
+    .segment-count-label { font-size:0.75rem; color:var(--text-muted); margin-bottom:16px; }
+    .segment-rules { display:flex; flex-direction:column; gap:6px; margin-bottom:16px; }
+    .rule-pill {
+      display:inline-flex; align-items:center; gap:6px;
+      padding:4px 10px; border-radius:var(--radius-full);
+      background:var(--bg-glass); border:1px solid var(--border);
+      font-size:0.72rem; color:var(--text-secondary); width:fit-content;
+    }
+    .rule-pip { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+    .segment-footer { display:flex; align-items:center; justify-content:space-between; padding-top:16px; border-top:1px solid var(--border); }
+    .segment-meta { font-size:0.72rem; color:var(--text-muted); }
+    .segment-actions { display:flex; gap:6px; }
+    .seg-btn { padding:5px 12px; border-radius:var(--radius-sm); font-size:0.75rem; font-weight:600; cursor:pointer; border:1px solid var(--border); background:var(--bg-glass); color:var(--text-secondary); transition:all var(--transition); }
+    .seg-btn:hover { background:var(--bg-glass-hover); color:var(--text-primary); }
+    .seg-btn.primary { background:var(--gradient-primary); color:#fff; border-color:transparent; }
+    .engagement-bar { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+    .eng-label { font-size:0.75rem; color:var(--text-muted); width:80px; flex-shrink:0; }
+    .eng-bar { flex:1; height:5px; background:var(--border); border-radius:3px; overflow:hidden; }
+    .eng-fill { height:100%; border-radius:3px; }
+    .eng-value { font-size:0.75rem; font-weight:600; width:36px; text-align:right; flex-shrink:0; }
+  </style>
+</head>
+<body>
+<div class="dashboard-layout">
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a href="../index.html" class="sidebar-logo"><span class="logo-icon">⚡</span><span>NovaMark</span></a>
+    </div>
+    <nav class="sidebar-nav">
+      <span class="nav-section-label">Main</span>
+      <a href="dashboard.html" class="sidebar-link"><span class="link-icon">📊</span><span>Dashboard</span></a>
+      <a href="campaigns.html" class="sidebar-link"><span class="link-icon">📣</span><span>Campaigns</span></a>
+      <a href="analytics.html" class="sidebar-link"><span class="link-icon">📈</span><span>Analytics</span></a>
+      <a href="email.html" class="sidebar-link"><span class="link-icon">📧</span><span>Email Center</span></a>
+      <span class="nav-section-label">Audience</span>
+      <a href="contacts.html" class="sidebar-link"><span class="link-icon">👥</span><span>Contacts</span></a>
+      <a href="segments.html" class="sidebar-link active"><span class="link-icon">🎯</span><span>Segments</span></a>
+      <span class="nav-section-label">Settings</span>
+      <a href="settings.html" class="sidebar-link"><span class="link-icon">⚙️</span><span>Settings</span></a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-profile">
+        <div class="user-avatar" id="sidebarUserAvatar">U</div>
+        <div class="user-info"><strong id="sidebarUserName">Loading...</strong><span id="sidebarUserEmail">...</span></div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main-content">
+    <header class="topbar">
+      <button class="icon-btn" id="sidebarToggle">☰</button>
+      <div class="topbar-search"><span class="search-icon">🔍</span><input type="search" placeholder="Search segments..." /></div>
+      <div class="topbar-actions">
+        <span style="color:var(--text-muted);font-size:0.8rem;" id="currentTime"></span>
+        <a href="#" class="icon-btn">🔔<span class="notif-dot"></span></a>
+        <button class="icon-btn" id="logoutBtn">🚪</button>
+      </div>
+    </header>
+
+    <main class="dashboard-body">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">🎯 Segments</h1>
+          <p class="page-subtitle">6 audience segments · 48,293 total contacts</p>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-primary" onclick="alert('Segment builder coming soon!')">+ New Segment</button>
+        </div>
+      </div>
+
+      <div class="segment-grid">
+        <!-- VIP Customers -->
+        <div class="segment-card purple">
+          <div class="segment-header">
+            <div>
+              <div class="segment-name">⭐ VIP Customers</div>
+              <div class="segment-desc">High-value customers with LTV &gt; $1,000</div>
+            </div>
+            <div class="segment-icon" style="background:rgba(99,102,241,0.15)">💎</div>
+          </div>
+          <div class="segment-count">8,240</div>
+          <div class="segment-count-label">contacts in segment</div>
+          <div class="engagement-bar"><span class="eng-label">Open Rate</span><div class="eng-bar"><div class="eng-fill" style="width:68%;background:var(--gradient-primary)"></div></div><span class="eng-value">68%</span></div>
+          <div class="engagement-bar"><span class="eng-label">Click Rate</span><div class="eng-bar"><div class="eng-fill" style="width:24%;background:var(--gradient-primary)"></div></div><span class="eng-value">24%</span></div>
+          <div class="segment-rules">
+            <div class="rule-pill"><span class="rule-pip" style="background:#6366f1"></span>LTV ≥ $1,000</div>
+            <div class="rule-pill"><span class="rule-pip" style="background:#6366f1"></span>Purchase count ≥ 3</div>
+          </div>
+          <div class="segment-footer">
+            <span class="segment-meta">Updated 2 days ago</span>
+            <div class="segment-actions">
+              <button class="seg-btn" onclick="alert('Editing VIP segment...')">Edit</button>
+              <button class="seg-btn primary" onclick="alert('Targeting VIP segment!')">Target</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- High-Intent Leads -->
+        <div class="segment-card blue">
+          <div class="segment-header">
+            <div>
+              <div class="segment-name">🔥 High-Intent Leads</div>
+              <div class="segment-desc">Visited pricing page ≥ 3 times recently</div>
+            </div>
+            <div class="segment-icon" style="background:rgba(59,130,246,0.15)">🎯</div>
+          </div>
+          <div class="segment-count">3,820</div>
+          <div class="segment-count-label">contacts in segment</div>
+          <div class="engagement-bar"><span class="eng-label">Open Rate</span><div class="eng-bar"><div class="eng-fill" style="width:58%;background:linear-gradient(90deg,#3b82f6,#6366f1)"></div></div><span class="eng-value">58%</span></div>
+          <div class="engagement-bar"><span class="eng-label">Click Rate</span><div class="eng-bar"><div class="eng-fill" style="width:18%;background:linear-gradient(90deg,#3b82f6,#6366f1)"></div></div><span class="eng-value">18%</span></div>
+          <div class="segment-rules">
+            <div class="rule-pill"><span class="rule-pip" style="background:#3b82f6"></span>Visited /pricing ≥ 3x (30d)</div>
+            <div class="rule-pill"><span class="rule-pip" style="background:#3b82f6"></span>Email opened in last 14d</div>
+          </div>
+          <div class="segment-footer">
+            <span class="segment-meta">Updated today</span>
+            <div class="segment-actions">
+              <button class="seg-btn" onclick="alert('Editing High-Intent segment...')">Edit</button>
+              <button class="seg-btn primary" onclick="alert('Targeting High-Intent Leads!')">Target</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Active Subscribers -->
+        <div class="segment-card green">
+          <div class="segment-header">
+            <div>
+              <div class="segment-name">✅ Active Subscribers</div>
+              <div class="segment-desc">Opened or clicked an email in last 60 days</div>
+            </div>
+            <div class="segment-icon" style="background:rgba(16,185,129,0.15)">📬</div>
+          </div>
+          <div class="segment-count">28,410</div>
+          <div class="segment-count-label">contacts in segment</div>
+          <div class="engagement-bar"><span class="eng-label">Open Rate</span><div class="eng-bar"><div class="eng-fill" style="width:48%;background:linear-gradient(90deg,#10b981,#34d399)"></div></div><span class="eng-value">48%</span></div>
+          <div class="engagement-bar"><span class="eng-label">Click Rate</span><div class="eng-bar"><div class="eng-fill" style="width:10%;background:linear-gradient(90deg,#10b981,#34d399)"></div></div><span class="eng-value">10%</span></div>
+          <div class="segment-rules">
+            <div class="rule-pill"><span class="rule-pip" style="background:#10b981"></span>Email activity within 60d</div>
+            <div class="rule-pill"><span class="rule-pip" style="background:#10b981"></span>Status = Subscribed</div>
+          </div>
+          <div class="segment-footer">
+            <span class="segment-meta">Updated 1 day ago</span>
+            <div class="segment-actions">
+              <button class="seg-btn" onclick="alert('Editing Active Subscribers...')">Edit</button>
+              <button class="seg-btn primary" onclick="alert('Targeting Active Subscribers!')">Target</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Win-Back -->
+        <div class="segment-card orange">
+          <div class="segment-header">
+            <div>
+              <div class="segment-name">🔁 Win-Back Targets</div>
+              <div class="segment-desc">No email activity in 90+ days</div>
+            </div>
+            <div class="segment-icon" style="background:rgba(245,158,11,0.15)">😴</div>
+          </div>
+          <div class="segment-count">5,820</div>
+          <div class="segment-count-label">contacts in segment</div>
+          <div class="engagement-bar"><span class="eng-label">Open Rate</span><div class="eng-bar"><div class="eng-fill" style="width:12%;background:linear-gradient(90deg,#f59e0b,#f97316)"></div></div><span class="eng-value">12%</span></div>
+          <div class="engagement-bar"><span class="eng-label">Click Rate</span><div class="eng-bar"><div class="eng-fill" style="width:2%;background:linear-gradient(90deg,#f59e0b,#f97316)"></div></div><span class="eng-value">2%</span></div>
+          <div class="segment-rules">
+            <div class="rule-pill"><span class="rule-pip" style="background:#f59e0b"></span>No email opens in 90d</div>
+            <div class="rule-pill"><span class="rule-pip" style="background:#f59e0b"></span>Had ≥ 1 purchase ever</div>
+          </div>
+          <div class="segment-footer">
+            <span class="segment-meta">Updated 3 days ago</span>
+            <div class="segment-actions">
+              <button class="seg-btn" onclick="alert('Editing Win-Back segment...')">Edit</button>
+              <button class="seg-btn primary" onclick="alert('Launching win-back campaign!')">Target</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- New Sign-ups -->
+        <div class="segment-card pink">
+          <div class="segment-header">
+            <div>
+              <div class="segment-name">🆕 New Sign-ups</div>
+              <div class="segment-desc">Registered within the last 30 days</div>
+            </div>
+            <div class="segment-icon" style="background:rgba(236,72,153,0.15)">🌱</div>
+          </div>
+          <div class="segment-count">1,293</div>
+          <div class="segment-count-label">contacts in segment</div>
+          <div class="engagement-bar"><span class="eng-label">Open Rate</span><div class="eng-bar"><div class="eng-fill" style="width:72%;background:linear-gradient(90deg,#ec4899,#a855f7)"></div></div><span class="eng-value">72%</span></div>
+          <div class="engagement-bar"><span class="eng-label">Click Rate</span><div class="eng-bar"><div class="eng-fill" style="width:28%;background:linear-gradient(90deg,#ec4899,#a855f7)"></div></div><span class="eng-value">28%</span></div>
+          <div class="segment-rules">
+            <div class="rule-pill"><span class="rule-pip" style="background:#ec4899"></span>Sign-up date within 30d</div>
+          </div>
+          <div class="segment-footer">
+            <span class="segment-meta">Live / auto-updated</span>
+            <div class="segment-actions">
+              <button class="seg-btn" onclick="alert('Editing New Sign-ups...')">Edit</button>
+              <button class="seg-btn primary" onclick="alert('Launching onboarding!')">Target</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- New Segment CTA -->
+        <div class="segment-card cyan" style="border:2px dashed var(--border);background:transparent;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;min-height:280px;" onclick="alert('Segment builder coming soon!')">
+          <span style="font-size:2.5rem">➕</span>
+          <div style="text-align:center">
+            <div style="font-weight:700;color:var(--text-secondary);margin-bottom:4px">Create New Segment</div>
+            <div style="font-size:0.78rem;color:var(--text-muted)">Define rules & auto-populate</div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<script src="../js/dashboard.js"></script>
+</body>
+</html>

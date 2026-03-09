@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create Account – NovaMark</title>
+  <meta name="description" content="Create your NovaMark account and start your free 14-day trial." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/global.css" />
+  <link rel="stylesheet" href="../css/auth.css" />
+</head>
+<body>
+  <!-- Background -->
+  <div class="auth-bg">
+    <div class="orb-1"></div>
+    <div class="orb-2"></div>
+    <div class="auth-grid-lines"></div>
+  </div>
+
+  <!-- Auth Page -->
+  <main class="auth-page">
+    <div class="auth-card">
+      <!-- Header -->
+      <div class="auth-header">
+        <a href="../index.html" class="auth-logo">
+          <span class="logo-icon">⚡</span>
+          <span>NovaMark</span>
+        </a>
+        <h1>Start for free</h1>
+        <p>Already have an account? <a href="login.html">Sign in</a></p>
+      </div>
+
+      <!-- Form Message -->
+      <div class="form-message" id="formMessage" role="alert"></div>
+
+      <!-- Register Form -->
+      <form class="auth-form" id="registerForm" novalidate>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fullName">Full Name</label>
+            <div class="input-wrapper">
+              <span class="input-icon">👤</span>
+              <input
+                type="text"
+                id="fullName"
+                name="fullName"
+                placeholder="John Doe"
+                autocomplete="name"
+                required
+              />
+            </div>
+            <span class="field-error"></span>
+          </div>
+          <div class="form-group">
+            <label for="plan">Plan</label>
+            <div class="input-wrapper">
+              <span class="input-icon">🎯</span>
+              <select id="plan" name="plan">
+                <option value="starter">Starter – $29/mo</option>
+                <option value="pro" selected>Pro – $79/mo</option>
+                <option value="enterprise">Enterprise – $199/mo</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <div class="input-wrapper">
+            <span class="input-icon">✉️</span>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="you@company.com"
+              autocomplete="email"
+              required
+            />
+          </div>
+          <span class="field-error"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <div class="input-wrapper">
+            <span class="input-icon">🔒</span>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Min. 8 characters"
+              autocomplete="new-password"
+              required
+            />
+            <button type="button" class="password-toggle" aria-label="Toggle password">👁️</button>
+          </div>
+          <span class="field-error"></span>
+          <!-- Password strength -->
+          <div class="password-strength" id="strengthMeter">
+            <div class="strength-bar">
+              <div class="strength-segment"></div>
+              <div class="strength-segment"></div>
+              <div class="strength-segment"></div>
+              <div class="strength-segment"></div>
+            </div>
+            <span class="strength-label"></span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="confirmPassword">Confirm Password</label>
+          <div class="input-wrapper">
+            <span class="input-icon">🔐</span>
+            <input
+              type="password"
+              id="confirmPassword"
+              name="confirmPassword"
+              placeholder="Repeat your password"
+              autocomplete="new-password"
+              required
+            />
+            <button type="button" class="password-toggle" aria-label="Toggle confirm password">👁️</button>
+          </div>
+          <span class="field-error"></span>
+        </div>
+
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="terms" required />
+            I agree to the <a href="#" style="color:var(--primary-light)">Terms of Service</a>
+            and <a href="#" style="color:var(--primary-light)">Privacy Policy</a>
+          </label>
+        </div>
+
+        <button type="submit" id="registerBtn" class="btn btn-primary btn-auth">
+          Create Account – Free for 14 Days
+        </button>
+      </form>
+
+      <!-- Divider -->
+      <div class="auth-divider">or sign up with</div>
+
+      <!-- Social Auth -->
+      <div class="social-auth">
+        <button type="button" class="btn-social">
+          <span class="social-icon">G</span>
+          Continue with Google
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <script src="../js/auth.js"></script>
+</body>
+</html>
